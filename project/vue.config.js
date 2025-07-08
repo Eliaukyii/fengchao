@@ -1,3 +1,4 @@
+
 const { defineConfig } = require("@vue/cli-service");
 // 开启gzip压缩
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
@@ -38,12 +39,8 @@ module.exports = defineConfig({
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name(module) {
-              const packageName = module.context.match(
-                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-              )[1];
-              return `npm.${packageName.replace("@", "")}`;
-            },
+            name: "npm.vendor",
+            chunks: "all",
           },
         },
       },

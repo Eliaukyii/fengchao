@@ -4,24 +4,10 @@
     <div class="title-group">
       <h2 class="title">物料关联管理</h2>
       <el-button type="primary" class="addform" size="small" @click="handleAdd">
-        <i class="el-icon-plus" style="margin-right: 5px"></i
-        >单个添加</el-button
-      >
+        <i class="el-icon-plus" style="margin-right: 5px"></i>单个添加</el-button>
     </div>
     <!-- 上传区域 -->
-    <el-upload
-      class="upload-box"
-      drag
-      multiple
-      action="/api/sku-inventory-import/importExcel"
-      :on-success="handleUploadSuccess"
-      :on-error="handleUploadError"
-      :before-upload="beforeUpload"
-      accept=".csv,.xlsx,.xls"
-      :file-list="fileList"
-      :show-file-list="false"
-      ref="uploadRef"
-    >
+    <el-upload class="upload-box" drag multiple action="/api/sku-inventory-import/importExcel" :on-success="handleUploadSuccess" :on-error="handleUploadError" :before-upload="beforeUpload" accept=".csv,.xlsx,.xls" :file-list="fileList" :show-file-list="false" ref="uploadRef">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">
         点击或拖拽文件至此上传<br />
@@ -29,12 +15,8 @@
       </div>
     </el-upload>
     <div class="button-group">
-      <el-button size="small" class="template-btn" @click="downloadTemplate"
-        >下载模板</el-button
-      >
-      <el-button type="primary" size="small" @click="handleImport"
-        >开始导入</el-button
-      >
+      <el-button size="small" class="template-btn" @click="downloadTemplate">下载模板</el-button>
+      <el-button type="primary" size="small" @click="handleImport">开始导入</el-button>
     </div>
 
     <!-- 表格区域 -->
@@ -42,72 +24,27 @@
       <div class="table-header">
         <h2 class="sub-title">关联关系列表</h2>
         <div class="search-group">
-          <el-input
-            v-model="keyword"
-            placeholder="请输入震坤行SKU编码、T+存货编码"
-            class="search-input"
-            size="small"
-            clearable
-            filterable
-          >
-            <el-select
-              slot="prepend"
-              placeholder="请选择"
-              style="width: 120px"
-              v-model="searchType"
-              clearable
-            >
+          <el-input v-model="keyword" placeholder="请输入震坤行SKU编码、T+存货编码" class="search-input" size="small" clearable filterable>
+            <el-select slot="prepend" placeholder="请选择" style="width: 120px" v-model="searchType" clearable>
               <el-option label="SKU编码" value="1"></el-option>
               <el-option label="T+存货编码" value="2"></el-option>
             </el-select>
           </el-input>
           <div class="action-btns">
-            <el-button type="primary" size="small" @click="handleSearch"
-              ><i class="el-icon-search" style="margin-right: 5px"></i
-              >查询</el-button
-            >
-            <el-button size="small" type="warning" @click="exportAll"
-              ><i class="el-icon-upload2" style="margin-right: 5px"></i
-              >导出</el-button
-            >
+            <el-button type="primary" size="small" @click="handleSearch"><i class="el-icon-search" style="margin-right: 5px"></i>查询</el-button>
+            <el-button size="small" type="warning" @click="exportAll">
+              <i :class="isExporting  ? 'el-icon-loading' : 'el-icon-upload2'" style="margin-right: 5px"></i>导出全部</el-button>
           </div>
         </div>
       </div>
     </div>
 
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      border
-      fit
-      v-loading="loading"
-      :header-cell-style="{ 'background-color': '#f5f7fa' }"
-    >
-      <el-table-column
-        prop="skuCode"
-        label="震坤行SKU编码"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="skuName"
-        label="震坤行SKU名称"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="inventoryCode"
-        label="T+存货编码"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="inventoryName"
-        label="T+存货名称"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="modifyDate"
-        label="操作时间"
-        align="center"
-      ></el-table-column>
+    <el-table :data="tableData" style="width: 100%" border fit v-loading="loading" element-loading-text="正在加载数据，请稍候..." :header-cell-style="{ 'background-color': '#f5f7fa' }">
+      <el-table-column prop="skuCode" label="震坤行SKU编码" align="center"></el-table-column>
+      <el-table-column prop="skuName" label="震坤行SKU名称" align="center"></el-table-column>
+      <el-table-column prop="inventoryCode" label="T+存货编码" align="center"></el-table-column>
+      <el-table-column prop="inventoryName" label="T+存货名称" align="center"></el-table-column>
+      <el-table-column prop="modifyDate" label="操作时间" align="center"></el-table-column>
       <el-table-column label="操作" align="center" fixed="right">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="handleDelete(scope.row)">
@@ -117,84 +54,28 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="this.queryParams.pageNum"
-      :page-sizes="[10, 100, 500, 1000, 5000]"
-      background
-      :page-size="this.queryParams.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      style="margin-top: 20px"
-      :pager-count="computedPagerCount"
-    >
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="this.queryParams.pageNum" :page-sizes="[10, 50, 100]" background :page-size="this.queryParams.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin-top: 20px" :pager-count="computedPagerCount">
     </el-pagination>
     <!-- 抽屉表单 -->
-    <el-drawer
-      title="单个添加"
-      :visible.sync="open"
-      :size="drawerSize"
-      :direction="drawerDirection"
-    >
+    <el-drawer title="单个添加" :visible.sync="open" :size="drawerSize" :direction="drawerDirection">
       <div class="drawer-content">
-        <el-form
-          ref="form"
-          label-width="120px"
-          :model="form"
-          label-position="top"
-          style="padding: 20px"
-          :rules="rules"
-        >
-          <el-form-item
-            label="震坤行SKU编码"
-            prop="skuCode"
-            class="drawer-item"
-          >
-            <el-input
-              v-model="form.skuCode"
-              placeholder="请输入震坤行SKU编码"
-            />
+        <el-form ref="form" label-width="120px" :model="form" label-position="top" style="padding: 20px" :rules="rules">
+          <el-form-item label="震坤行SKU编码" prop="skuCode" class="drawer-item">
+            <el-input v-model="form.skuCode" placeholder="请输入震坤行SKU编码" />
           </el-form-item>
-          <el-form-item
-            label="T+存货编码"
-            prop="inventoryCode"
-            class="drawer-item"
-          >
-            <el-input
-              v-model="form.inventoryCode"
-              placeholder="请输入T+存货编码"
-            />
+          <el-form-item label="T+存货编码" prop="inventoryCode" class="drawer-item">
+            <el-input v-model="form.inventoryCode" placeholder="请输入T+存货编码" />
           </el-form-item>
-          <el-form-item
-            label="震坤行SKU名称"
-            prop="skuName"
-            class="drawer-item"
-          >
-            <el-input
-              v-model="form.skuName"
-              placeholder="请输入震坤行SKU名称"
-            />
+          <el-form-item label="震坤行SKU名称" prop="skuName" class="drawer-item">
+            <el-input v-model="form.skuName" placeholder="请输入震坤行SKU名称" />
           </el-form-item>
-          <el-form-item
-            label="T+存货名称"
-            prop="inventoryName"
-            class="drawer-item"
-          >
-            <el-input
-              v-model="form.inventoryName"
-              placeholder="请输入存货名称"
-            />
+          <el-form-item label="T+存货名称" prop="inventoryName" class="drawer-item">
+            <el-input v-model="form.inventoryName" placeholder="请输入存货名称" />
           </el-form-item>
         </el-form>
         <div class="drawer__footer">
           <el-button @click="cancelForm">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="submitForm('form')"
-            :loading="loading"
-            >{{ loading ? "提交中 ..." : "保 存" }}</el-button
-          >
+          <el-button type="primary" @click="submitForm('form')" :loading="loading">{{ loading ? "提交中 ..." : "保 存" }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -203,6 +84,9 @@
 
 <script>
 import { queryList, add, del } from "@/api/index.js";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+
 export default {
   name: "home",
   data() {
@@ -225,6 +109,7 @@ export default {
         inventoryName: "",
       },
       loading: false,
+      isExporting: false,
       screenWidth: document.documentElement.clientWidth,
       fileList: [],
 
@@ -299,11 +184,12 @@ export default {
       if (response.statusCodeValue === 200) {
         if (response.body && response.body.length > 0) {
           const errorMessages = response.body
-            .map((item) =>{
+            .map((item) => {
               const baseMsg = `${item.rowNumber}: ${item.operationType}`;
               const detailMsg = item.errorMsg ? `，原因：${item.errorMsg}` : "";
               return `${baseMsg}${detailMsg} (SKU: ${item.skuCode})`;
-            }).join("\n");
+            })
+            .join("\n");
           this.$message.error({
             message: errorMessages,
             duration: 10000, // 显示10秒
@@ -316,7 +202,7 @@ export default {
         this.$message.error(`上传失败: ${response.statusCode}`);
       }
       this.fileList = [];
-      this.getQueryList()
+      this.getQueryList();
     },
     handleUploadError(err, file, fileList) {
       let errorMessage = "上传失败";
@@ -371,32 +257,6 @@ export default {
     },
     handleResize() {
       this.screenWidth = document.documentElement.clientWidth;
-    },
-
-    //分页循环获取全部数据
-    async getAllData() {
-      this.loading = true;
-      let allData = [];
-      let pageNum = 1;
-      let pageSize = 1000;
-      let total = 0;
-      do {
-        const params = {
-          ...this.queryParams,
-          pageNum,
-          pageSize,
-        };
-        const res = await queryList(params);
-        allData = allData.concat(
-          res.rows.filter((item) => item.isDelete === 0)
-        );
-        total = res.total;
-        pageNum++;
-      } while (pageNum <= Math.ceil(total / pageSize));
-      {
-        this.loading = false;
-        return allData;
-      }
     },
 
     //表格数据
@@ -477,14 +337,25 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          // 导出逻辑
-          this.getAllData().then((allData) => {
+        .then(async () => {
+          this.isExporting = true;
+          this.loading = true;
+          NProgress.start();
+          try {
+            const allData = await this.getAllData();
             this.exportToCSV(allData);
-          });
+            this.$message.success("导出成功");
+            this.isExporting = false;
+          } catch (e) {
+            this.$message.error("导出失败");
+          } finally {
+            this.isExporting = false;
+            this.loading = false;
+            NProgress.done();
+          }
         })
         .catch(() => {
-          this.$message.info("已取消");
+          this.$message.info("已取消导出");
         });
     },
     exportToCSV(data) {
@@ -499,11 +370,11 @@ export default {
         headers.join(","), // 表头
         ...data.map((item) =>
           [
-            item.skuCode,
-            item.skuName,
-            item.inventoryCode,
-            item.inventoryName,
-            item.modifyDate,
+            item.skuCode ?? "",
+            item.skuName ?? "",
+            item.inventoryCode ?? "",
+            item.inventoryName ?? "",
+            item.modifyDate ?? "",
           ]
             .map((field) => `"${String(field).replace(/"/g, '""')}"`)
             .join(",")
@@ -511,15 +382,46 @@ export default {
       ].join("\n");
 
       // 创建下载链接
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob([`\uFEFF${csvContent}`], {
+        type: "text/csv;charset=utf-8;",
+      });
       const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", "物料关联管理.csv");
+      link.href = URL.createObjectURL(blob);
+      link.download = "物料关联管理.csv";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
       this.$message.success("导出成功");
+    },
+    //分页循环获取全部数据
+    async getAllData() {
+      this.loading = true;
+      let allData = [];
+      let pageNum = 1;
+      let pageSize = 500;
+      let total = 0;
+      try {
+        do {
+          const params = {
+            ...this.queryParams,
+            pageNum,
+            pageSize,
+          };
+          const res = await queryList(params);
+          allData = allData.concat(
+            res.rows.filter((item) => item.isDelete === 0)
+          );
+          total = res.total;
+          pageNum++;
+        } while (pageNum <= Math.ceil(total / pageSize));
+        return allData;
+      } catch (error) {
+        console.error("获取数据失败:", error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
     beforeUpload(file) {
       const isLt5M = file.size / 1024 / 1024 < 5;
