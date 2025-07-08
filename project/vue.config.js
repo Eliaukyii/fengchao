@@ -4,13 +4,15 @@ const { defineConfig } = require("@vue/cli-service");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
 module.exports = defineConfig({
+  publicPath: '/',
+  outputDir: 'dist',
   transpileDependencies: true,
   lintOnSave: false,
 
   devServer: {
     proxy: {
       "/api": {
-        target: "http://117.72.35.156:13333",
+        target: "http://shysqf.3322.org:13559",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",
