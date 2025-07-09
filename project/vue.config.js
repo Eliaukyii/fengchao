@@ -1,9 +1,10 @@
-
 const { defineConfig } = require("@vue/cli-service");
 // 开启gzip压缩
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
 module.exports = defineConfig({
+  publicPath: '/',
+  outputDir: 'zkh_dist',
   transpileDependencies: true,
   lintOnSave: false,
 

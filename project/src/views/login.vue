@@ -35,8 +35,8 @@ export default {
   data() {
     return {
       form: {
-        username: "admin",
-        password: "123456",
+        username: "",
+        password: "",
         captcha: "",
       },
       verifyCode: null,
@@ -52,27 +52,23 @@ export default {
   },
   methods: {
     handleLogin() {
-      // if (!this.form.username || !this.form.password || !this.form.captcha) {
-      //   this.$message.error("请输入完整信息");
-      //   return;
-      // }
-      // if (!this.verifyCode.validate(this.form.captcha)) {
-      //   this.$message.error("验证码错误");
-      //   this.form.captcha = "";
-      //   this.verifyCode.refresh();
-      //   return;
-      // }
-      // this.$router.push("/home");
       this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          if (!this.verifyCode.validate(this.form.captcha)) {
-            this.$message.error("验证码错误");
-            this.form.captcha = "";
-            this.verifyCode.refresh();
-            return;
-          }
-          this.$router.push("/home");
+        if (!valid) return;
+        //校验验证码
+        if (!this.verifyCode.validate(this.form.captcha)) {
+          this.$message.error("验证码错误");
+          this.form.captcha = "";
+          this.verifyCode.refresh();
+          return;
         }
+        // 模拟验证用户名密码
+        const { username, password } = this.form;
+        if (username !== "admin" || password !== "123456") {
+          this.$message.error("用户名或密码错误");
+          return;
+        }
+        this.$message.success("登录成功");
+        this.$router.push("/home");
       });
     },
   },
