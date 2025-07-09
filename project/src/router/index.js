@@ -1,13 +1,23 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import Home from '../views/home.vue'
+import Login from '../views/login.vue'
 
 Vue.use(VueRouter)
 const routes = [
   {
-    path: '/',
+    path:'/',
+    redirect:'/login'
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/home',
     name: 'home',
-    component: () => import('../views/home.vue')
+    component: Home
   },
  
 ]
@@ -16,4 +26,18 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  if(to.path==='/home'){
+   const isLogin = localStorage.getItem('isLogin')
+   if(isLogin === 'true'){
+    next()
+   }else{
+    next('/login')
+   }
+  }else{
+    next()
+  } 
+})
+
 export default router
